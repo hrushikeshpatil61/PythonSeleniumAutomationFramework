@@ -1,7 +1,9 @@
+import configparser
 import os
 import time
 import unittest
-
+import os
+import shutil
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -12,39 +14,36 @@ from Pages.Cart import Cart
 from Pages.HomePage import HomePage
 from Pages.Login import Login
 from Pages.ProductDetails import ProductDetails
+from Pages.ReportUtils import ReportUtils
 from Pages.SideBar import SideBar
 from Pages.XLUtils import XLUtils
 import allure
 from allure_commons.types import AttachmentType
-
-
+import allure_pytest
 # unittest.TestCase
+import datetime
+
 
 class TestCases:
     ser_obj = Service("Drivers/chromedriver.exe")
     driver = webdriver.Chrome(service=ser_obj)
+    reportUtils = ReportUtils(driver)
+    dynamic_output_directory = reportUtils.create_date_time_folder()
+    os.environ["ALLURE_RESULTS_DIR"] = dynamic_output_directory
 
-    @classmethod
-    def setup_class(cls):
-        cls.driver.implicitly_wait(10)  # Implicit wait set at the class level
-
-    @classmethod
-    def teardown_class(cls):
-        cls.driver.quit()
-
-    # @pytest.fixture()
-    def test_001_login_by_excel(self):
+    def test_00_login_by_excel(self):
         self.driver.get(Locators.baseURL)
         self.lp = Login(self.driver)
         self.xlutils = XLUtils(self.driver)
         username = self.xlutils.get_data(Locators.login_data_file_path, "Sheet1", 1, 1)
         password = self.xlutils.get_data(Locators.login_data_file_path, "Sheet1", 1, 2)
-        self.lp.set_username(username)  # "standard_user" passing username into inputtext
-        self.lp.set_password(password)  # "secret_sauce"  passing password into inputtext
+        self.lp.set_username(username)  # "standard_user" passing username from command_line
+        self.lp.set_password(password)  # "secret_sauce"  passing password from command_line
         time.sleep(2)
         self.lp.click_login()  # call login function
         time.sleep(2)
         # after login browser will open HomePage below we are asserting if we are currently in homepage
+        # self.reportUtils.take_pass_screenshot("beforeLogin")
         assert self.driver.current_url == Locators.all_items_URL, "Login failed"
         self.sb = SideBar(self.driver)
         self.sb.open_side_bar()
@@ -56,8 +55,8 @@ class TestCases:
         self.lp.set_username(username)  # "standard_user" passing username into inputtext
         self.lp.set_password(password)  # "secret_sauce"  passing password into inputtext
         self.lp.click_login()  # call login function
-        screenshot_path = "Screenshots/login.png"
-        allure.attach(self.driver.get_screenshot_as_png(), name=screenshot_path, attachment_type=AttachmentType.PNG)
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
         assert self.driver.current_url == Locators.all_items_URL, "Login failed"
 
     def test_2_varify_application_name_text(self):
@@ -302,9 +301,5 @@ class TestCases:
         assert self.driver.current_url == Locators.baseURL, "Enable to logout from SideBar Menu!"
         time.sleep(2)
 
-    # def test_11_varify_app_logo_text_at_center(self):
-    #     app_logo = self.driver.find_element(By.CLASS_NAME, "app_logo")
-    #     app_logo_location = app_logo.location
-    #     window_width = self.driver.execute_script("return window.innerWidth")
-    #     window_center = window_width / 2
-    #     assert app_logo_location["x"] == window_center, "app logo text is not at the center of the screen!"
+    # def test_16_move_files_to_date_time_folder(self):
+    #     self.reportUtils.move_reports_to_current_date_time()

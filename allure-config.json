@@ -1,0 +1,7 @@
+{
+  "allure": {
+    "report": {
+      "directory": "Reports"
+    }
+  }
+}

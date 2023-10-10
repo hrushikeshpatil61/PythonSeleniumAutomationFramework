@@ -4,6 +4,7 @@ from selenium import webdriver
 import pytest
 import pytest_html
 
+from Pages.ReportUtils import ReportUtils
 
 
 @pytest.fixture()
@@ -36,10 +37,3 @@ def username(request):
 @pytest.fixture
 def password(request):
     return request.config.getoption("--password")
-
-
-@pytest.mark.optionalhook
-def pytest_metadata(metadata):
-    metadata.pop("JAVA_HOME", None)
-    metadata.pop("Plugins", None)
-
