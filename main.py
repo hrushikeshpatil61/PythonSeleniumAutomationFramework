@@ -28,10 +28,15 @@ class TestCases:
     ser_obj = Service("Drivers/chromedriver.exe")
     driver = webdriver.Chrome(service=ser_obj)
     reportUtils = ReportUtils(driver)
-    dynamic_output_directory = reportUtils.create_date_time_folder()
-    os.environ["ALLURE_RESULTS_DIR"] = dynamic_output_directory
+    driver.implicitly_wait(10)  # Implicit wait set at the class level
+
+    @classmethod
+    def teardown_class(cls):
+        # cls.reportUtils.second_move_reports_to_current_date_time()
+        cls.driver.close()
 
     def test_00_login_by_excel(self):
+
         self.driver.get(Locators.baseURL)
         self.lp = Login(self.driver)
         self.xlutils = XLUtils(self.driver)
@@ -290,6 +295,8 @@ class TestCases:
             self.xlutils.write_data(Locators.product_name_data_file_path, "Sheet1", r, 2, data)
 
     def test_15_validate_sidebar_link_logout(self):
+        print(
+            f"***#{self.reportUtils.date_time_directory}#***#{self.reportUtils.pass_folder_path}#***#{self.reportUtils.fail_folder_path}#***")
         # create object of sidebar
         self.sb = SideBar(self.driver)
         # open sidebar using sidebar object
@@ -300,6 +307,3 @@ class TestCases:
         # assert after logout page
         assert self.driver.current_url == Locators.baseURL, "Enable to logout from SideBar Menu!"
         time.sleep(2)
-
-    # def test_16_move_files_to_date_time_folder(self):
-    #     self.reportUtils.move_reports_to_current_date_time()
