@@ -31,10 +31,16 @@ class TestCases:
     driver.implicitly_wait(10)  # Implicit wait set at the class level
 
     @classmethod
+    def setUpClass(cls):
+        cls.driver.implicitly_wait(10)
+
+
+    @classmethod
     def teardown_class(cls):
         # cls.reportUtils.second_move_reports_to_current_date_time()
         cls.driver.close()
 
+    @pytest.fixture()
     def test_00_login_by_excel(self):
 
         self.driver.get(Locators.baseURL)
@@ -44,15 +50,15 @@ class TestCases:
         password = self.xlutils.get_data(Locators.login_data_file_path, "Sheet1", 1, 2)
         self.lp.set_username(username)  # "standard_user" passing username from command_line
         self.lp.set_password(password)  # "secret_sauce"  passing password from command_line
-        time.sleep(2)
+        
         self.lp.click_login()  # call login function
-        time.sleep(2)
+        
         # after login browser will open HomePage below we are asserting if we are currently in homepage
         # self.reportUtils.take_pass_screenshot("beforeLogin")
         assert self.driver.current_url == Locators.all_items_URL, "Login failed"
         self.sb = SideBar(self.driver)
         self.sb.open_side_bar()
-        self.sb.logout()
+        # self.sb.logout()
 
     def test_01_login_by_command_line(self, username, password):
         self.driver.get(Locators.baseURL)
@@ -68,7 +74,7 @@ class TestCases:
         # varify if application name is displayed properly without spelling-mistake
         assert "Swag Labs" == self.driver.find_element(By.CLASS_NAME,
                                                        Locators.app_logo_class_name).text, "Application name is wrong!"
-        time.sleep(2)
+        
 
     def test_03_open_and_close_sidebar_menu(self):
         # Test whether sidebar is properly opening and closing!
@@ -77,7 +83,7 @@ class TestCases:
         self.sb.open_side_bar()
         # checking that after opening sidebar value of area_hidden attribute is updated to false
         assert self.sb.get_area_hidden_value() == "false", "Enable to open SideBar from Menu options button!"
-        time.sleep(1)  # if not waited then elementClickInterception error will occur!
+          # if not waited then elementClickInterception error will occur!
         # closing sidebar using object of class SideBar
         self.sb.close_side_bar()
         # after closing sidebar checking if value of area_hidden attribute is updated to true or not!
@@ -88,31 +94,33 @@ class TestCases:
         self.sb = SideBar(self.driver)
         # open sidebar class
         self.sb.open_side_bar()
-        time.sleep(2)
+        
         # click on sidebar button all items
         self.sb.all_items()
         # close sidebar
         self.sb.close_side_bar()
         # validate whether current opened page is equal to all items page
         assert self.driver.current_url == Locators.all_items_URL, "Enable to open All Items tab from SideBar Menu!"
-        time.sleep(2)
+        
 
-    def test_05_validate_sidebar_link_about(self):
+    def test_05_validate_sidebar_link_about(self,test_00_login_by_excel):
         # create object of SideBar class and call method open sidebar!
         self.sb = SideBar(self.driver)
-        self.sb.open_side_bar()
-        time.sleep(1)
+        
+        # self.sb.open_side_bar()
+        
         # click about button from sidebar menu
         self.sb.about()
         # check if about page is opened by asserting with aboutURL
         if self.driver.current_url != Locators.aboutURL:
-            self.sb.close_side_bar()
+            # self.sb.close_side_bar()
             assert "Enable to open About page from SideBar Menu!"
         # go back to main page
         self.driver.back()
         # close sidebar
-        self.sb.close_side_bar()
-        time.sleep(2)
+        
+        # self.sb.close_side_bar()
+        
 
     def test_06_validate_sidebar_link_reset_app_state(self):
         #  Create object of HomePage, SideBar, Cart classes
@@ -124,10 +132,10 @@ class TestCases:
         #  add product to cart
         self.homepage.add_to_cart(product_1)
         self.sb.open_side_bar()
-        time.sleep(1)
+        
         #  Click app reset button
         self.sb.reset_app_state()
-        time.sleep(2)
+        
         #  close sidebar
         self.sb.close_side_bar()
         #  Varify if all cart is empty or not
@@ -139,7 +147,7 @@ class TestCases:
         self.homepage = HomePage(self.driver)
         #  open cart page
         self.homepage.open_cart()
-        time.sleep(2)
+        
         #  check whether cart page is opened or not by validating URL
         assert self.driver.current_url == Locators.cart_URL, "Enable to open cart page from main-page!"
         self.driver.back()
@@ -149,7 +157,7 @@ class TestCases:
         self.homepage = HomePage(self.driver)
         #  call sort by name function
         self.homepage.sort_by_name()
-        time.sleep(2)
+        
         #  get all product list from HomePage
         all_products_name_list = self.homepage.get_all_product_names()
         #  assert if products are sorted according to selected filter or not
@@ -163,7 +171,7 @@ class TestCases:
         self.homepage.reverse_sort_by_name()
         #  get all product list from HomePage
         all_products_name_list = self.homepage.get_all_product_names()
-        time.sleep(2)
+        
         #  assert if products are sorted according to selected filter or not
         assert all_products_name_list == sorted(all_products_name_list,
                                                 reverse=True), "Enable to sort products in reverse order of names!"
@@ -175,7 +183,7 @@ class TestCases:
         self.homepage.sort_by_price()
         #  get all product list from HomePage
         all_products_price_list = self.homepage.get_all_product_prices_in_numbers()
-        time.sleep(2)
+        
         #  assert if products are sorted according to selected filter or not
         assert all_products_price_list == sorted(
             all_products_price_list), "Enable to sort products by price low to high!"
@@ -187,7 +195,7 @@ class TestCases:
         self.homepage.reverse_sort_by_price()
         #  get all product list from HomePage
         all_products_price_list = self.homepage.get_all_product_prices_in_numbers()
-        time.sleep(2)
+        
         #  assert if products are sorted according to selected filter or not
         assert all_products_price_list == sorted(all_products_price_list,
                                                  reverse=True), "Enable to sort products from price high to low!"
@@ -198,7 +206,7 @@ class TestCases:
         self.cart = Cart(self.driver)
         #  open cart from homepage
         self.homepage.open_cart()
-        time.sleep(1)
+        
         #  get text of continue shopping button using get text method for validation
         continue_shopping_btn_text = self.cart.continue_shopping_btn_get_text()
         #  open continue shopping button
@@ -215,7 +223,7 @@ class TestCases:
         #  get total number of products for iterating, and adding to cart
         total_products_len = self.homepage.total_number_of_products()
         for index in range(total_products_len):  # range function gives list of numbers specified starting from 0
-            time.sleep(1)
+            
             # fetching all products by calling function
             products_list = self.homepage.get_all_products()
             # store name, description, price of each product to varify with cart page
@@ -239,7 +247,7 @@ class TestCases:
             self.driver.back()
             #  varify for all elements using loop -> remove cart item from home page should update cart page
         for index in range(total_products_len - 1, -1, -1):
-            time.sleep(1)
+            
             products_list = self.homepage.get_all_products()
             # remove cart item from homepage remove button
             self.homepage.remove_from_cart(products_list[index])
@@ -254,7 +262,7 @@ class TestCases:
         #  get count of products for adding one by one to cart
         total_products = self.homepage.total_number_of_products()
         for index in range(total_products):
-            time.sleep(1)
+            
             products_list = self.homepage.get_all_products()
             #  store details of each product for verifying with product detials page data
             product_name = self.homepage.get_product_name(products_list[index])
@@ -262,7 +270,7 @@ class TestCases:
             product_price = self.homepage.get_product_price(products_list[index])
             #  opening product details page
             self.homepage.open_product_details(products_list[index])
-            time.sleep(1)
+            
 
             #  getting product data from product details page
             self.productDetails = ProductDetails(self.driver)
@@ -295,15 +303,13 @@ class TestCases:
             self.xlutils.write_data(Locators.product_name_data_file_path, "Sheet1", r, 2, data)
 
     def test_15_validate_sidebar_link_logout(self):
-        print(
-            f"***#{self.reportUtils.date_time_directory}#***#{self.reportUtils.pass_folder_path}#***#{self.reportUtils.fail_folder_path}#***")
         # create object of sidebar
         self.sb = SideBar(self.driver)
         # open sidebar using sidebar object
         self.sb.open_side_bar()
-        time.sleep(2)
+        
         # click on logout button from sidebar
         self.sb.logout()
         # assert after logout page
         assert self.driver.current_url == Locators.baseURL, "Enable to logout from SideBar Menu!"
-        time.sleep(2)
+        
