@@ -10,17 +10,10 @@ from Pages.Login import Login
 from Pages.ReportUtils import ReportUtils
 from Pages.SideBar import SideBar
 from Pages.XLUtils import XLUtils
+from selenium.webdriver.chrome.service import Service
 
 
-@pytest.fixture()
-def setup(browser):
-    print(browser)
-    if (browser == "chrome"):
-        driver = webdriver.Chrome()
-    elif browser == "firefox":
-        driver = webdriver.Firefox()
 
-    return driver
 
 
 def pytest_addoption(parser):
@@ -29,9 +22,24 @@ def pytest_addoption(parser):
     parser.addoption("--password")
 
 
-@pytest.fixture()
-def browser(request):
-    return request.config.getoption("--browser")
+@pytest.fixture(scope="class")
+def get_driver(request):
+    browser_name = request.config.getoption("--browser")
+
+    if browser_name == "chrome":
+        ser_obj = Service("Drivers/chromedriver.exe")
+        driver = webdriver.Chrome(service=ser_obj)
+    elif browser_name == "firefox":
+        ser_obj = Service("Drivers/geckodriver.exe")
+        driver = webdriver.Firefox(service=ser_obj)
+    elif browser_name == "edge":
+        ser_obj = Service("Drivers/msedgedriver.exe")
+        driver = webdriver.Edge(service=ser_obj)
+    else:
+        raise ValueError("Unsupported browser specified in command-line arguments")
+
+    yield driver
+    driver.quit()
 
 
 @pytest.fixture

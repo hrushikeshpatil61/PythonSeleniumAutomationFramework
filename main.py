@@ -1,46 +1,29 @@
-import configparser
-import os
-import time
-import unittest
-import os
-import shutil
+# unittest.TestCase
+import datetime
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-import sys
+
+import conftest
 from Locators.Locators import Locators
 from Pages.Cart import Cart
 from Pages.HomePage import HomePage
 from Pages.Login import Login
 from Pages.ProductDetails import ProductDetails
-from Pages.ReportUtils import ReportUtils
 from Pages.SideBar import SideBar
 from Pages.XLUtils import XLUtils
-import allure
-from allure_commons.types import AttachmentType
-import allure_pytest
-# unittest.TestCase
-import datetime
 
 
 class TestCases:
-    ser_obj = Service("Drivers/chromedriver.exe")
-    driver = webdriver.Chrome(service=ser_obj)
-    reportUtils = ReportUtils(driver)
-    driver.implicitly_wait(10)  # Implicit wait set at the class level
+    driver = None
 
     @classmethod
-    def setUpClass(cls):
-        cls.driver.implicitly_wait(10)
+    @pytest.mark.usefixtures("get_driver")
+    def test_setup_browser(cls, get_driver):
+        cls.driver = get_driver  # Assign the browser to the class variable
 
-
-    @classmethod
-    def teardown_class(cls):
-        # cls.reportUtils.second_move_reports_to_current_date_time()
-        cls.driver.close()
-
-    @pytest.fixture()
     def test_00_login_by_excel(self):
 
         self.driver.get(Locators.baseURL)
