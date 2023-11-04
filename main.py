@@ -16,15 +16,18 @@ from Pages.SideBar import SideBar
 from Pages.XLUtils import XLUtils
 
 
+@pytest.fixture(scope="class")
+def setup_browser(request, get_driver):
+    driver = get_driver
+    driver.implicitly_wait(10)
+
+    request.cls.driver = driver  # Assign the browser instance to the test class
+    yield driver  # Provide the driver instance to the tests
+
+
+@pytest.mark.usefixtures("setup_browser")
 class TestCases:
     driver = None
-
-    @classmethod
-    @pytest.mark.usefixtures("get_driver")
-    def test_setup_browser(cls, get_driver):
-
-        cls.driver = get_driver  # Assign the browser to the class variable
-        cls.driver.implicitly_wait(10)
 
     def test_00_login_by_excel(self):
 
@@ -43,7 +46,7 @@ class TestCases:
         assert self.driver.current_url == Locators.all_items_URL, "Login failed"
         self.sb = SideBar(self.driver)
         self.sb.open_side_bar()
-        # self.sb.logout()
+        self.sb.logout()
 
     def test_01_login_by_command_line(self, username, password):
         self.driver.get(Locators.baseURL)
