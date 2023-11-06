@@ -29,7 +29,7 @@ def get_driver(request):
         driver = webdriver.Firefox(service=ser_obj)
     elif browser_name == "edge":
         ser_obj = Service("Drivers/msedgedriver.exe")
-        driver = webdriver.Edge(service=ser_obj)       # Current Edge driver version : 118.0.2088.76 119.0.2151.44
+        driver = webdriver.Edge(service=ser_obj)       # Current Edge driver version :  119.0.2151.44
     else:
         ser_obj = Service("Drivers/chromedriver.exe")  # Current Chromedriver version : 119.0.6045.105
         driver = webdriver.Chrome(service=ser_obj)

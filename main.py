@@ -20,7 +20,6 @@ from Pages.XLUtils import XLUtils
 def setup_browser(request, get_driver):
     driver = get_driver
     driver.implicitly_wait(10)
-
     request.cls.driver = driver  # Assign the browser instance to the test class
     yield driver  # Provide the driver instance to the tests
 
