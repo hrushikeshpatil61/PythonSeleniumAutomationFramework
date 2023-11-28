@@ -12,6 +12,7 @@ from Pages.Cart import Cart
 from Pages.HomePage import HomePage
 from Pages.Login import Login
 from Pages.ProductDetails import ProductDetails
+from Pages.ReportUtils import ReportUtils
 from Pages.SideBar import SideBar
 from Pages.XLUtils import XLUtils
 
@@ -26,7 +27,9 @@ def setup_browser(request, get_driver):
 
 @pytest.mark.usefixtures("setup_browser")
 class TestCases:
-    driver = None
+    driver = None;
+    reportUtilsObj = ReportUtils(driver)
+    pass_folder_path, fail_folder_path = reportUtilsObj.get_pass_fail_folders()
 
     def test_00_login_by_excel(self):
 
@@ -37,7 +40,8 @@ class TestCases:
         password = self.xlutils.get_data(Locators.login_data_file_path, "Sheet1", 1, 2)
         self.lp.set_username(username)  # "standard_user" passing username from command_line
         self.lp.set_password(password)  # "secret_sauce"  passing password from command_line
-
+        self.driver.save_screenshot(self.pass_folder)
+        screenshot_path = os.path.join(pass_folder, f"{name}.png")
         self.lp.click_login()  # call login function
 
         # after login browser will open HomePage below we are asserting if we are currently in homepage
