@@ -6,7 +6,7 @@ class XLUtils:
     def __init__(self, driver):
         self.driver = driver
 
-    def get_row_count(self,file, sheetname):
+    def get_row_count(self, file, sheetname):
         workbook = openpyxl.load_workbook(file)
         sheet = workbook.get_sheet_by_name(sheetname)
         rows = sheet.max_row
@@ -19,13 +19,15 @@ class XLUtils:
         columns = sheet.max_column
         workbook.close()
         return columns
-    def get_row_col_count(self,filepath,sheetname):
+
+    def get_row_col_count(self, filepath, sheetname):
         workbook = openpyxl.load_workbook(filepath)
         sheet = workbook.get_sheet_by_name(sheetname)
         columns = sheet.max_column
         rows = sheet.max_row
         workbook.close()
         return rows, columns
+
     def get_data(self, filepath, sheetname, row, col):
         workbook = openpyxl.load_workbook(filepath)
         sheet = workbook.get_sheet_by_name(sheetname)

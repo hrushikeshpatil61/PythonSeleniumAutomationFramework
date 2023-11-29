@@ -1,6 +1,7 @@
 import time
 
 from selenium.webdriver.common.by import By
+
 from Locators.Locators import Locators
 
 
@@ -13,6 +14,7 @@ class SideBar:
         time.sleep(2)
         self.driver.find_element(By.ID, Locators.sidebar_menu_button_id).click()
         time.sleep(2)
+
     def close_side_bar(self):
         time.sleep(2)
         self.driver.find_element(By.ID, Locators.sidebar_cross_button_id).click()

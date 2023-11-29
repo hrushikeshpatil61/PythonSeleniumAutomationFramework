@@ -1,10 +1,8 @@
+import datetime
 import os
 import shutil
-import sys
-import time
 
 import allure
-import datetime
 
 
 class ReportUtils:
@@ -39,7 +37,14 @@ class ReportUtils:
         pass_folder_path, fail_folder_path = self.get_pass_fail_folders()
         screenshot_path = os.path.join(pass_folder_path, f"{name}.png")
         self.driver.save_screenshot(screenshot_path)
-        # Attach the screenshot to the Allure report
+        allure.attach.file(screenshot_path, name=name, attachment_type=allure.attachment_type.PNG)
+
+    def take_fail_screenshot(self, name):
+        # timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+        pass_folder_path, fail_folder_path = self.get_pass_fail_folders()
+        screenshot_path = os.path.join(fail_folder_path, f"{name}.png")
+        self.driver.save_screenshot(screenshot_path)
         allure.attach.file(screenshot_path, name=name, attachment_type=allure.attachment_type.PNG)
 
     def move_reports_to_current_date_time(self):
@@ -73,7 +78,6 @@ class ReportUtils:
                     print(f"File '{file}' moved successfully.")
                 except Exception as e:
                     print(f"Error moving file '{file}': {e}")
-
 
     def second_move_reports_to_current_date_time(self):
         self.driver.implicitly_wait(5)
