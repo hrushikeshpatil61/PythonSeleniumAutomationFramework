@@ -163,9 +163,13 @@ class TestCases:
         self.homepage = HomePage(self.driver)
         #  open cart page
         self.homepage.open_cart()
-        self.reportUtils.take_pass_screenshot("Cart page opened!")
+
         #  check whether cart page is opened or not by validating URL
-        assert self.driver.current_url == Locators.cart_URL, "Enable to open cart page from main-page!"
+        if self.driver.current_url == Locators.cart_URL:
+            self.reportUtils.take_pass_screenshot("Cart page opened!")
+        else:
+            self.reportUtils.take_fail_screenshot("Cart page open Failed!")
+            assert False, "Enable to open cart page from main-page!"
         self.driver.back()
 
     def test_08_varify_ascending_sorting_filter_by_name(self):
@@ -174,13 +178,16 @@ class TestCases:
         self.homepage = HomePage(self.driver)
         #  call sort by name function
         self.homepage.sort_by_name()
-        self.reportUtils.take_pass_screenshot("Products sorted by names!")
 
         #  get all product list from HomePage
         all_products_name_list = self.homepage.get_all_product_names()
         #  assert if products are sorted according to selected filter or not
-        assert all_products_name_list == sorted(
-            all_products_name_list), "Enable to sort products in ascending order of names!"
+        if all_products_name_list == sorted(
+                all_products_name_list):
+            self.reportUtils.take_pass_screenshot("Products sorted by names!")
+        else:
+            self.reportUtils.take_fail_screenshot("Products sorted by names Failed!")
+            assert False, "Enable to sort products in ascending order of names!"
 
     def test_09_varify_descending_sorting_filter_by_name(self):
         self.reportUtils = ReportUtils(self.driver)
@@ -188,13 +195,17 @@ class TestCases:
         self.homepage = HomePage(self.driver)
         #  call reverse sort by name function
         self.homepage.reverse_sort_by_name()
-        self.reportUtils.take_pass_screenshot("Products reverse-sorted by names!")
+
         #  get all product list from HomePage
         all_products_name_list = self.homepage.get_all_product_names()
 
         #  assert if products are sorted according to selected filter or not
-        assert all_products_name_list == sorted(all_products_name_list,
-                                                reverse=True), "Enable to sort products in reverse order of names!"
+        if all_products_name_list == sorted(all_products_name_list,
+                                            reverse=True):
+            self.reportUtils.take_pass_screenshot("Products reverse-sorted by names!")
+        else:
+            self.reportUtils.take_fail_screenshot("Products reverse-sorted by names Failed!")
+            assert False, "Enable to sort products in reverse order of names!"
 
     def test_10_varify_ascending_sorting_filter_by_prices(self):
         self.reportUtils = ReportUtils(self.driver)
@@ -202,13 +213,17 @@ class TestCases:
         self.homepage = HomePage(self.driver)
         #  call function sort by price
         self.homepage.sort_by_price()
-        self.reportUtils.take_pass_screenshot("Products sorted by prices!")
+
         #  get all product list from HomePage
         all_products_price_list = self.homepage.get_all_product_prices_in_numbers()
 
         #  assert if products are sorted according to selected filter or not
-        assert all_products_price_list == sorted(
-            all_products_price_list), "Enable to sort products by price low to high!"
+        if all_products_price_list == sorted(
+                all_products_price_list):
+            self.reportUtils.take_pass_screenshot("Products sorted by prices!")
+        else:
+            self.reportUtils.take_fail_screenshot("Products sorted by prices Failed!")
+            assert False, "Enable to sort products by price low to high!"
 
     def test_11_varify_descending_sorting_filter_by_prices(self):
         self.reportUtils = ReportUtils(self.driver)
@@ -219,10 +234,12 @@ class TestCases:
         self.reportUtils.take_pass_screenshot("Products reverse-sorted by prices!")
         #  get all product list from HomePage
         all_products_price_list = self.homepage.get_all_product_prices_in_numbers()
+        if all_products_price_list == sorted(all_products_price_list):
+            self.reportUtils.take_pass_screenshot("Products reverse-sorted by prices!")
+        else:
+            self.reportUtils.take_fail_screenshot("Products reverse-sorted by prices Failed!")
+            assert False, "Enable to sort products from price high to low!"
 
-        #  assert if products are sorted according to selected filter or not
-        assert all_products_price_list == sorted(all_products_price_list,
-                                                 reverse=True), "Enable to sort products from price high to low!"
 
     def test_12_varify_cart_page_back_button_continue_shopping(self):
         self.reportUtils = ReportUtils(self.driver)
