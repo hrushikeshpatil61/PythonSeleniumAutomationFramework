@@ -151,8 +151,8 @@ class TestCases:
         #  close sidebar
         self.sb.close_side_bar()
         #  Varify if all cart is empty or not
-        if self.cart.cart_items_length() == 0 & self.cart.cart_badge_count_number() == 0:
-            self.reportUtils.take_pass_screenshot("reset done cart Empty Cart Count 0")
+        if self.cart.cart_items_length() == 0 and self.cart.cart_badge_count_number() == 0:
+            self.reportUtils.take_pass_screenshot("Reset Status verified.Cart is Empty")
         else:
             self.reportUtils.take_fail_screenshot("Enable to reset cart Application state!")
             assert False, "Enable to reset Application state!"
@@ -231,10 +231,9 @@ class TestCases:
         self.homepage = HomePage(self.driver)
         #  call function reverse sort by price
         self.homepage.reverse_sort_by_price()
-        self.reportUtils.take_pass_screenshot("Products reverse-sorted by prices!")
         #  get all product list from HomePage
         all_products_price_list = self.homepage.get_all_product_prices_in_numbers()
-        if all_products_price_list == sorted(all_products_price_list):
+        if all_products_price_list == sorted(all_products_price_list,reverse=True):
             self.reportUtils.take_pass_screenshot("Products reverse-sorted by prices!")
         else:
             self.reportUtils.take_fail_screenshot("Products reverse-sorted by prices Failed!")
@@ -248,15 +247,17 @@ class TestCases:
         self.cart = Cart(self.driver)
         #  open cart from homepage
         self.homepage.open_cart()
-
-        #  get text of continue shopping button using get text method for validation
-        continue_shopping_btn_text = self.cart.continue_shopping_btn_get_text()
-        self.reportUtils.take_pass_screenshot("Verifying Continue-Shopping Button!")
+        #  assert continue shopping button text is proper or not
+        if self.cart.continue_shopping_btn_get_text() == "Continue Shopping":
+            self.reportUtils.take_pass_screenshot("Button Continue shopping text Verified!")
+        else:
+            self.reportUtils.take_fail_screenshot("Button Continue-Shopping text Verification Failed!")
+            assert False, "Button Continue-Shopping text Verification Failed!"
         #  open continue shopping button
         self.cart.continue_shopping_btn_open()
-        #  assert continue shopping button text is proper or not
-        assert continue_shopping_btn_text == "Continue Shopping", "Text of shopping cart btn is changed!"
         #  assert if continue shopping button when clicked direct to MainPage
+        if Locators.all_items_URL == self.driver.current_url:
+            self.reportUtils.take_pass_screenshot("Button Continue Shopping clicked successfully!")
         assert Locators.all_items_URL == self.driver.current_url, ("Enable to go back to main Page from "
                                                                    "Cart_Continue_Shopping button!")
 
@@ -359,4 +360,8 @@ class TestCases:
         # click on logout button from sidebar
         self.sb.logout()
         # assert after logout page
-        assert self.driver.current_url == Locators.baseURL, "Enable to logout from SideBar Menu!"
+        if self.driver.current_url == Locators.baseURL:
+            self.reportUtils.take_pass_screenshot("Successfully Performed Log Out!")
+        else:
+            self.reportUtils.take_fail_screenshot("Logout Failed!")
+            assert False, "Enable to logout from SideBar Menu!"
